@@ -1,0 +1,127 @@
+﻿@using Company.Example.Web.Ui.Models.ViewModels
+@model List<EmployeeViewModel>
+
+@{
+	ViewBag.Title = "Employees";
+}
+
+<script type="text/javascript">
+	function addNewEmployee() {
+		var employeeModel = {
+			Name: $('#EmployeeName').val(),
+			Surname: $('#Surname').val(),
+			Login: $('#Login').val(),
+			Department: $('#Department').val(),
+			IsAllowedToLogin: $('#IsAllowedToLogin').is(':checked'),
+			IsActive: $('#IsActive').is(':checked')
+		};
+
+		$.ajax({
+			url: 'Add',
+			type: 'post',
+			data: employeeModel,
+			dataType: 'json',
+			success: function (response) {
+				if (response.success == true) {
+					$('#employeeTbody').append(
+                    "<tr><td>" + response.data.Id +
+                        "</td><td>" + response.data.Name +
+                        "</td><td>" + response.data.Surname +
+                        "</td><td>" + response.data.Login +
+                        "</td><td>" + response.data.LastLoginDate +
+                        "</td><td>" + response.data.Department +
+                        "</td><td>" + response.data.IsAllowedToLogin +
+                        "</td><td>" + response.data.IsActive +
+                    "</td></tr>");
+					alert(response.msg);
+				} else {
+					alert(response.msg);
+				}
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log("The following error occured: " + textStatus, errorThrown);
+			},
+		});
+	}
+
+	function getDepartmentList() {
+		var json = $('#Department').val();
+		if (json == null) {
+			$.ajax({
+				url: 'List',
+				type: 'post',
+				dataType: 'json',
+				data: json,
+				error: function (jqXHR, textStatus, errorThrown) {
+					console.log("The following error occured: " + textStatus, errorThrown);
+				},
+			}).done(function (data) {
+				if (data != null) {
+					var items = [];
+					$.each(data, function (i, dep) {
+						items += "<option value='" + dep.Id + "'>" + dep.Name + "</option>";
+					});
+					$('#Department').html(items);
+				} else {
+					alert("No departments...");
+				}
+			});
+		}
+	};
+
+</script>
+
+@{
+	using (Html.BeginForm())
+	{
+		@Html.Label("Employee name")
+		@Html.TextBox("EmployeeName")
+		<br />
+		@Html.Label("Surname")
+		@Html.TextBox("Surname")
+		<br />
+		@Html.Label("Login")
+		@Html.TextBox("Login")
+		<br />
+		@Html.Label("Department")
+		@Html.DropDownList("Department", new SelectList("", ""), new { onClick = "javascript:getDepartmentList();", style = "width:100px" })
+		<br />
+		@Html.Label("IsAllowedToLogin")
+		@Html.CheckBox("IsAllowedToLogin")
+		<br />
+		@Html.Label("IsActive")
+		@Html.CheckBox("IsActive")
+		<br />
+		<input type="button" value="Add new employee" onclick="javascript: addNewEmployee();" />
+	}
+}
+
+<h2>Employees</h2>
+
+<table>
+	<thead>
+	<th>Id</th>
+	<th>Name</th>
+	<th>Surname</th>
+	<th>Login</th>
+	<th>Last login date</th>
+	<th>Department</th>
+	<th>Is allowed <br> to login</th>
+	<th>Is active</th>
+	</thead>
+	<tbody id="employeeTbody">
+		@foreach (EmployeeViewModel um in Model)
+		{
+			<tr>
+				<td>@um.Id</td>
+				<td>@um.Name</td>
+				<td>@um.Surname</td>
+				<td>@um.Login</td>
+				<td>@um.LastLoginDate</td>
+				<td>@um.Department</td>
+				<td>@um.IsAllowedToLogin</td>
+				<td>@um.IsActive</td>
+			</tr>
+		}
+	</tbody>
+</table>

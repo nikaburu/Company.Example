@@ -1,0 +1,63 @@
+﻿@using Company.Example.Web.Ui.Models.ViewModels
+@model List<ProjectRoleViewModel>
+@{
+	ViewBag.Title = "Project Roles";
+}
+<script type="text/javascript">
+	function addNewProjectRole() {
+		var newRole = {
+			Name: $('#roleName').val()
+		};
+
+		$.ajax({
+			url: 'Add',
+			type: 'post',
+			data: newRole,
+			dataType: 'json',
+			success: function (response) {
+				if (response.success == true) {
+					$('#projectRoleTbody').append("<tr><td>" + response.data.Id + "</td><td>" + response.data.Name + "</td></tr>");
+					alert(response.msg);
+				} else {
+					alert(response.msg);
+				}
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log("The following error occured: " + textStatus, errorThrown);
+			},
+		});
+	};
+</script>
+
+<p>
+	@Html.TextBox("roleName")
+	<br />
+	<input type="button" value="Add new project role" name="Add new project role" onclick="javascript: addNewProjectRole();" />
+</p>
+
+<h2>Project Roles</h2>
+
+<table>
+	<thead>
+	<th>
+		id
+	</th>
+	<th>
+		Name
+	</th>
+	</thead>
+	<tbody id="projectRoleTbody">
+		@{foreach (ProjectRoleViewModel role in Model)
+		{
+			<tr>
+				<td>
+					@role.Id
+				</td>
+				<td>
+					@role.Name
+				</td>
+			</tr>
+		}
+		}
+	</tbody>
+</table>

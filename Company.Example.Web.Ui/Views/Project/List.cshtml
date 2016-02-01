@@ -1,0 +1,112 @@
+﻿@using Company.Example.CrossCutting
+@using Company.Example.Web.Ui.Extensions
+@using Company.Example.Web.Ui.Models.ViewModels
+
+@model List<ProjectViewModel>
+
+@{
+	ViewBag.Title = "Projects";
+}
+
+<script type="text/javascript">
+	function addNewProject() {
+		var projectViewModel = {
+			Name: $('#Projectname').val(),
+			StartDate: $('#Startdate').val(),
+			DateOfCreation: $('#DateOfCreation').val(),
+			IsClosed: $('#IsClosed').is(':checked')
+		};
+
+		$.ajax({
+			url: 'Add',
+			type: 'post',
+			data: projectViewModel,
+			dataType: 'json',
+			success: function (response) {
+				if (response.success == true) {
+					$('#projectTboby').append(
+                        "<tr><td>" + response.data.Id +
+                            "</td><td>" + response.data.Name +
+                            "</td><td>" + response.data.IsClosed +
+                            "</td><td>" + response.data.DateOfCreation +
+                            "</td><td>" + response.data.StartDate +
+                        "</td></tr>");
+					alert(response.msg);
+				} else {
+					alert(response.msg);
+				}
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				console.log("The following error occured: " + textStatus, errorThrown);
+			},
+		});
+	}
+
+</script>
+
+@{
+	if (Html.GlobalActionAllowed(GlobalActionType.ModifyProjects))
+	{
+		using (Html.BeginForm())
+		{
+			@Html.Label("Project name")
+			@Html.TextBox("Projectname")
+			<br />
+			@Html.Label("Start date")
+			@Html.TextBox("Startdate", "2012-10-01 00:00:00.000")
+			<br />
+			@Html.Label("Date Of Creation")
+			@Html.TextBox("DateOfCreation", "2012-10-01 00:00:00.000")
+			<br />
+			@Html.Label("Is Closed")
+			@Html.CheckBox("IsClosed", false)
+			<br />
+			<input type="button" value="Add new project" onclick="addNewProject()" />
+		}
+	}
+}
+
+<h2>List of Projects</h2>
+
+<table>
+	<thead>
+	<th>
+		id
+	</th>
+	<th>
+		Name
+	</th>
+	<th>
+		Is Closed
+	</th>
+	<th>
+		DateOfCreation
+	</th>
+	<th>
+		StartDate
+	</th>
+	</thead>
+	<tbody id="projectTboby">
+		@{foreach (ProjectViewModel project in Model)
+		{
+			<tr>
+				<td>
+					@project.Id
+				</td>
+				<td>
+					@project.Name
+				</td>
+				<td>
+					@project.IsClosed
+				</td>
+				<td>
+					@project.DateOfCreation
+				</td>
+				<td>
+					@project.StartDate
+				</td>
+			</tr>
+		}
+		}
+	</tbody>
+</table>

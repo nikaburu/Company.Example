@@ -1,0 +1,58 @@
+﻿@using Company.Example.Web.Ui.Models.ViewModels
+@model List<DepartmentViewModel>
+
+@{
+	ViewBag.Title = "Departments";
+}
+
+<script type="text/javascript">
+    function addNewDepartment() {
+    	var departmentName = $('#departmentName').val();
+
+        $.ajax({
+            url: 'Add',
+            type: 'post',
+            data: { departmentName: departmentName },
+            dataType: 'json',
+            success: function (response) {
+                if (response.success == true) {
+                    $('#departmentTbody').append("<tr><td>" + response.data.Id + "</td><td>" + response.data.Name + "</td></tr>");
+                    alert(response.msg);
+                } else {
+                    alert(response.msg);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log( "The following error occured: " + textStatus, errorThrown );
+            },
+        });
+    };
+</script>
+
+<p>
+	@Html.TextBox("departmentName") 
+    <br/>
+	<input id="departmentName" type="button" value="Add new department" name="Add new department" onclick="javascript: addNewDepartment();" />
+</p>
+
+<h2>Departments</h2>
+
+<table>
+	<thead>
+		
+	</thead>
+	<tbody id="departmentTbody">
+		@{foreach(DepartmentViewModel um in Model)
+		  {
+			  <tr>
+				  <td>
+				        @um.Id
+				  </td>
+				  <td>
+					    @um.Name
+				  </td>
+			  </tr>
+		  }
+		}
+	</tbody>
+</table>

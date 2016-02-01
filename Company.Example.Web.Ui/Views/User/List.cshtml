@@ -1,0 +1,28 @@
+﻿@using Company.Example.Web.Ui.Models.ViewModels
+@model List<UserViewModel>
+
+@{
+    ViewBag.Title = "Users";
+}
+
+<h2>Users</h2>
+
+<table>
+	<thead>
+		
+	</thead>
+	<tbody>
+		@{foreach(UserViewModel um in Model)
+		  {
+			  <tr>
+				  <td>
+				        @um.Id
+				  </td>
+				  <td>
+					    @um.DomainLogin
+				  </td>
+			  </tr>
+		  }
+		}
+	</tbody>
+</table>
